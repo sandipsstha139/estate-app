@@ -1,12 +1,14 @@
-import { useContext, useState } from 'react';
+import { useContext, useState } from "react";
 import "./profileUpdatePage.scss";
-import { AuthContext } from '../../context/AuthContext';
-import apiRequest from '../../lib/apiRequest';
-import {useNavigate} from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import apiRequest from "../../lib/apiRequest";
+import { useNavigate } from "react-router-dom";
+import UploadWidget from '../../components/uploadWidget/UploadWidget';
 
 function ProfileUpdatePage() {
-  const [error, setError] = useState("");
   const { currentUser, updateUser } = useContext(AuthContext);
+  const [error, setError] = useState("");
+  const [avatar, setAvatar] = useState(currentUser.avatar);
 
   const navigate = useNavigate();
 
@@ -15,25 +17,23 @@ function ProfileUpdatePage() {
 
     const formData = new FormData(e.target);
 
-    const {username, email, password} = Object.fromEntries(formData);
+    const { username, email, password } = Object.fromEntries(formData);
 
     try {
-      const res = await apiRequest.put(`/users/${currentUser.id}`,{
+      const res = await apiRequest.put(`/users/${currentUser.id}`, {
         username,
         email,
-        password
-      })
+        password,
+        avatar
+      });
 
       updateUser(res.data);
       navigate("/profile");
-
-      
     } catch (err) {
       console.log(err);
       setError(err);
-      
     }
-  }
+  };
 
   return (
     <div className="profileUpdatePage">
@@ -67,7 +67,21 @@ function ProfileUpdatePage() {
         </form>
       </div>
       <div className="sideContainer">
-        <img src={currentUser.avatar || "/noavatar.png"} alt="" className="avatar" />
+        <img
+          src={avatar || "/noavatar.png"}
+          alt=""
+          className="avatar"
+        />
+        <UploadWidget 
+          uwConfig={{
+            cloudName: "duxh8y4os",
+            uploadPreset: "estate",
+            multiple: false,
+            maxImageFileSize: 5000000,
+            folder: "avatars",
+          }}
+          setAvatar= {setAvatar}
+         />
       </div>
     </div>
   );
