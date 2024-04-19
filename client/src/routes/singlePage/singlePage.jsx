@@ -1,17 +1,46 @@
 import "./singlePage.scss";
 import Slider from "../../components/slider/Slider";
 import Map from "../../components/map/Map";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import apiRequest from "../../lib/apiRequest";
 
 function SinglePage() {
   const post = useLoaderData();
-  console.log(post);
+  const [saved, setSaved] = useState(post.isSaved);
+  const { currentUser } = useContext(AuthContext);
+  // console.log(post);
+
+  const navigate = useNavigate();
+
+  const handleSave = async () => {
+    setSaved((prev) => !prev);
+    if (!currentUser) {
+      navigate("/login");
+    }
+    try {
+      await apiRequest.post("/users/save", { postId: post.id });
+    } catch (err) {
+      console.log(err);
+      
+      setSaved((prev) => !prev);
+    }
+  };
   return (
     <div className="singlePage">
       <div className="details">
         <div className="wrapper">
-          <Slider images={post.images} />
+          <Slider
+            images={
+              post.images.length > 0
+                ? post.images
+                : [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjmShM7-kNHf5kT6L2xWZDEJkXZ456TfFWyO49MJePmA&s",
+                  ]
+            }
+          />
           <div className="info">
             <div className="top">
               <div className="post">
@@ -78,11 +107,11 @@ function SinglePage() {
             </div>
             <div className="size">
               <img src="/bed.png" alt="" />
-              <span>{post.postDetail.bedroom}</span>
+              <span>{post.bedroom}</span>
             </div>
             <div className="size">
               <img src="/bath.png" alt="" />
-              <span>{post.postDetail.bathroom}</span>
+              <span>{post.bathroom}</span>
             </div>
           </div>
           <p className="title">Nearby Places</p>
@@ -123,9 +152,14 @@ function SinglePage() {
               <img src="/chat.png" alt="" />
               Send a Message
             </button>
-            <button>
+            <button
+              onClick={handleSave}
+              style={{
+                backgroundColor: saved ? "yellow" : "white",
+              }}
+            >
               <img src="/save.png" alt="" />
-              Save the Place
+              {saved ? "Place Saved" : "Save the place"}
             </button>
           </div>
         </div>

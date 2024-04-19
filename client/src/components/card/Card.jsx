@@ -5,7 +5,13 @@ function Card({ item }) {
   return (
     <div className="card">
       <Link to={`/${item.id}`} className="imageContainer">
-        <img src={item.images[0]} alt="" />
+        <img
+          src={
+            item.images[0] ||
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjmShM7-kNHf5kT6L2xWZDEJkXZ456TfFWyO49MJePmA&s"
+          }
+          alt=""
+        />
       </Link>
       <div className="textContainer">
         <h2 className="title">
