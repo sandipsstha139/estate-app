@@ -1,7 +1,32 @@
-import { Link } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import "./card.scss";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import apiRequest from '../../lib/apiRequest';
 
 function Card({ item }) {
+  const post = useLoaderData();
+  console.log(post);
+  console.log(item);
+  const [saved, setSaved] = useState(item.isSaved);
+  const { currentUser } = useContext(AuthContext);
+  // console.log(post);
+
+  const navigate = useNavigate();
+
+  const handleSave = async () => {
+    setSaved((prev) => !prev);
+    if (!currentUser) {
+      navigate("/login");
+    }
+    try {
+      await apiRequest.post("/users/save", { postId: item.id});
+    } catch (err) {
+      console.log(err);
+
+      setSaved((prev) => !prev);
+    }
+  };
   return (
     <div className="card">
       <Link to={`/${item.id}`} className="imageContainer">
@@ -34,9 +59,9 @@ function Card({ item }) {
             </div>
           </div>
           <div className="icons">
-            <div className="icon">
-              <img src="/save.png" alt="" />
-            </div>
+              <div className="icon">
+                <img src="/save.png" alt="" onClick={handleSave} style={{backgroundColor: saved ? 'yellow' : 'white'}} />
+              </div>
             <div className="icon">
               <img src="/chat.png" alt="" />
             </div>
