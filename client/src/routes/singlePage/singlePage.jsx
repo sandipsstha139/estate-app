@@ -14,7 +14,6 @@ function SinglePage() {
   // console.log(post);
 
   const navigate = useNavigate();
-
   const handleSave = async () => {
     setSaved((prev) => !prev);
     if (!currentUser) {

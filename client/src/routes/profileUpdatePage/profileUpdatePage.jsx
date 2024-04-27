@@ -74,7 +74,7 @@ function ProfileUpdatePage() {
         />
         <UploadWidget 
           uwConfig={{
-            cloudName: "duxh8y4os",
+            cloudName: "sandipsstha",
             uploadPreset: "estate",
             multiple: false,
             maxImageFileSize: 5000000,
